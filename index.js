@@ -37,9 +37,25 @@ const sketch = ({ context, width, height }) => {
   return ({ context, width, height }) => {
     context.fillStyle = bgColor;
     context.fillRect(0, 0, width, height);
-    context.fillStyle = 'black';
+
+    context.lineWidth = 10;
+    context.translate(width * 0.5, height * 0.5);
+    // context.beginPath();
+    // context.moveTo(0, -300);
+    // context.lineTo(300, 200);
+    // context.lineTo(-300, 200);
+
+    // context.closePath();
+    drawPolygon({
+      context,
+      radius: 400,
+      sides: 7
+    });
+    context.stroke();
+    context.clip();
     rects.forEach(({ x, y, w, h, stroke, fill, blend }) => {
       context.save();
+      context.translate(-width * 0.5, -height * 0.5);
       context.translate(x, y);
       context.globalCompositeOperation = blend;
       context.strokeStyle = stroke;
@@ -79,6 +95,20 @@ const drawSkewedRect = ({ context, w = 600, h = 200, degree = -45 }) => {
   context.closePath();
   context.stroke();
   context.restore();
+};
+
+const drawPolygon = ({ context, radius = 100, sides = 3 }) => {
+  const slice = (2 * Math.PI) / sides;
+  context.beginPath();
+  context.moveTo(0, -radius);
+  // context.lineTo(radius * Math.cos(0), radius * Math.sin(0));
+  // context.lineTo(radius * Math.cos(90), radius * Math.sin(180));
+  for (let i = 1; i < sides; i++) {
+    // console.log(theta);
+    const theta = i * slice - 0.5 * Math.PI;
+    context.lineTo(radius * Math.cos(theta), radius * Math.sin(theta));
+  }
+  context.closePath();
 };
 
 canvasSketch(sketch, settings);
